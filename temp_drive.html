@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Upcoming Drives - Pratibha Charitable Trust</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="temp_drive.css">
+
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <img src="1.png" alt="Logo" style="height:50px;">
+        <div>
+          <div class="brand-title">Pratibha Charitable Trust</div>
+          <div class="brand-sub">Empowering Communities</div>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="programs.html">Programs</a>
+        <a href="temp_drive.html" class="active">Drives</a>
+        <a href="donate.html" class="cta small">Donate</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section panel-light" style="text-align:center;">
+    <div class="container" data-anim>
+      <h1 style="color:var(--accent-strong); font-size:2rem;">Big Changes Are Coming!</h1>
+      <p class="section-lead" style="max-width:650px;margin:auto;">
+        We are a newly formed NGO based in Vasai, Mumbai. Our mission is to serve our community through initiatives such
+        as school uniforms for students, public libraries, ambulance facilities, and promoting scientific thinking over
+        superstition.
+      </p>
+      <p class="section-lead" style="max-width:650px;margin:auto;">
+        Our first community drives will be launching soon — and <strong>your support today</strong> can help us
+        kickstart this journey and make a real difference from day one.
+      </p>
+      <a href="donate.html" class="btn primary" style="margin-top:20px;animation:bounce 2s infinite;">
+        Donate to Kickstart Our Mission
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="contact-info">
+        <p><strong>Pratibha Charitable Trust</strong></p>
+        <p><strong>Contact:</strong> gmail.com</p>
+        <p><strong>Phone Number:</strong> 7387345347 / 7620198640</p>
+        <p>
+          <strong>Address:</strong> Flat no E502, Kingston Tower,<br>
+          <span style="margin-left:5em;">Kaul Heritage City, Chulana, Vasai Road (W)</span><br>
+          Tal. Vasai, Dist Palghar 401201
+        </p>
+      </div>
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="programs.html">Programs</a>
+        <a href="donate.html">Get Involved</a>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    @keyframes bounce {
+
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-6px);
+      }
+
+      60% {
+        transform: translateY(-3px);
+      }
+    }
+  </style>
+
+  <!-- Scroll Animations -->
+  <script>
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('in-view');
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('[data-anim]').forEach(el => obs.observe(el));
+  </script>
+
+</body>
+
+</html>
