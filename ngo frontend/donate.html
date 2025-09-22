@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Donate - Pratibha Charitable Trust</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Razorpay Checkout (kept but disabled for now) -->
+  <!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="1.png" alt="Logo" style="height:50px;">
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">Pratibha Charitable Trust</div>
+          <div class="brand-sub">Empowering Communities</div>
+        </div>
+      </div>
+      <div class="menu-toggle" id="menu-toggle">☰</div>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="programs.html">Programs</a>
+        <a href="impact.html">Impact</a>
+        <a href="donate.html" class="cta small active">Donate</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="donate-hero">
+    <div class="container">
+      <h1>Make a Donation</h1>
+      <p>Your contribution funds immediate relief and long-term support.</p>
+    </div>
+  </section>
+
+  <!-- DONATE -->
+  <main class="donate-section">
+    <div class="container donate-grid">
+      <div class="donate-info">
+        <h2>Your gift changes lives</h2>
+        <p>We provide educational aid, medical assistance, and financial support to families in crisis.
+           Every rupee is accounted for with transparent reporting and real outcomes.</p>
+        <p>After a successful payment, you’ll automatically receive a <b>PDF certificate</b> by email with your
+           name, amount, and a unique certificate number.</p>
+      </div>
+
+      <div class="donation-box">
+        <h3>Donate to <span class="highlight">Pratibha Charitable Trust</span></h3>
+        <p>Fill your details to receive your donation certificate.</p>
+
+        <form id="donation-form" class="donation-form">
+          <input type="text" id="name" placeholder="Full Name" required />
+          <input type="email" id="email" placeholder="Email Address" required />
+          <input type="tel" id="phone" placeholder="Phone Number" required pattern="[0-9]{10,14}" />
+          <div class="row">
+            <input type="number" id="amount" placeholder="Amount (INR)" required min="1" step="1" />
+            <select id="program" required>
+              <option value="General">General Fund</option>
+              <option value="Educational Aid">Educational Aid</option>
+              <option value="Medical Assistance">Medical Assistance</option>
+              <option value="Financial Support">Financial Support</option>
+            </select>
+          </div>
+          <button type="submit" class="donate-btn">Donate (Dummy Mode)</button>
+          <a class="edit-details" href="#" id="status-text" style="display:block"></a>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="contact-info">
+        <p><strong>Pratibha Charitable Trust</strong></p>
+        <p><strong>Contact:</strong> contact@pratibhactrust.org</p>
+        <p><strong>Phone Number:</strong> 7387345347 / 7620198640</p>
+        <p>
+          <strong>Address:</strong> Flat no E502, Kingston Tower,<br>
+          <span style="margin-left:5em;">Kaul Heritage City, Chulana, Vasai Road (W)</span><br>
+          <span style="margin-left:5em;">Tal. Vasai, Dist Palghar 401201</span>
+        </p>
+      </div>
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="programs.html">Programs</a>
+        <a href="donate.html">Get Involved</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // mobile menu toggle
+    (function () {
+      const toggle = document.getElementById('menu-toggle');
+      const nav = document.querySelector('.main-nav');
+      if (!toggle || !nav) return;
+      function t() { nav.classList.toggle('show'); }
+      toggle.addEventListener('click', t);
+      toggle.addEventListener('keypress', (e) => { if (e.key === 'Enter') t(); });
+    })();
+
+    const statusText = document.getElementById('status-text');
+    const API = "http://127.0.0.1:5000";
+
+    function setStatus(msg) {
+      statusText.textContent = msg || '';
+      statusText.style.pointerEvents = 'none';
+    }
+
+    async function postJSON(url, data) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error(await res.text() || 'Request failed');
+      return res.json();
+    }
+
+    document.getElementById('donation-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setStatus('');
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const amount = parseInt(document.getElementById('amount').value, 10);
+      const program = document.getElementById('program').value;
+
+      if (!name || !email || !phone || !amount || amount < 1) {
+        setStatus('Please fill all fields correctly.');
+        return;
+      }
+
+      try {
+        setStatus('Creating order...');
+        const order = await postJSON(`${API}/create_order`, { amount, program, name, email, phone });
+
+        setStatus('Processing dummy payment...');
+        const verify = await postJSON(`${API}/verify_payment`, {
+          razorpay_order_id: order.id,
+          razorpay_payment_id: "pay_dummy_" + Math.random().toString(16).slice(2, 10),
+          razorpay_signature: "sim_signature",
+          simulate: true,
+          name, email, phone, amount, program
+        });
+
+        if (verify.email_sent) {
+          setStatus('Success! Certificate emailed. Downloading now...');
+        } else {
+          setStatus('Success! Certificate generated. Downloading...');
+        }
+
+        // auto-download PDF
+        if (verify.certificate_url) {
+          const a = document.createElement('a');
+          a.href = `${API}${verify.certificate_url}`;
+          a.download = '';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus('Error: ' + err.message);
+      }
+    });
+
+    /* ==== RAZORPAY (commented for now) ====
+    document.getElementById('donation-form').addEventListener('submit', async (e) => {
+      // original Razorpay code goes here
+    });
+    ==== END ==== */
+  </script>
+</body>
+</html>
